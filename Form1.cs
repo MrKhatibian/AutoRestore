@@ -23,7 +23,7 @@ namespace WindowsFormsApp
             InitializeComponent();
         }   
         
-        private void Form1_Load(object sender, EventArgs e)
+        private void frmAutoRestore_Load(object sender, EventArgs e)
         {
             label1.Visible = false;
             serverName(".");
@@ -45,16 +45,16 @@ namespace WindowsFormsApp
                 throw;
             }
         }
-
         
         //Make serverName Function for find ServerName and add to combo
         public void serverName(string str) 
-        {
-            //con = new SqlConnection("DataSource=" + str + ";InitialCatalog= Master; uid=sa; pwd=Micr0s0ft;");
-            con = new SqlConnection("Data Source=.;Initial Catalog= Master;Integrated Security=SSPI;");
+        {            
+            con = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
             con.Open();
-            cmd = new SqlCommand("select *  from sysservers  where srvproduct='SQL Server'", con);
-            dr = cmd.ExecuteReader();
+            cmd = new SqlCommand("select * from sysservers where srvproduct='SQL Server'", con);
+            dr = cmd.ExecuteReader();            
+            MessageBox.Show(con.WorkstationId);
+            //Find Server Name from data reader
             while (dr.Read())
             {
                 comboBox1.Items.Add(dr[2]);
