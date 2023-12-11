@@ -14,7 +14,7 @@ using System.Windows.Forms;
 namespace WindowsFormsApp
 {
     public partial class AutoRestore : Form
-    {
+    {        
         SqlConnection con;
         SqlCommand cmd;
         SqlDataReader dr;
@@ -64,13 +64,9 @@ namespace WindowsFormsApp
             //}
             //dr.Close();
             #endregion
-        }
-        //Make Connection to SQL server and find all Database for add to combo
-        public void Createconnection()
-        {
-            con = new SqlConnection("Data Source=" + (comboBox2.Text) + ";Initial Catalog= Master;Integrated Security=SSPI;");
-            con.Open();
-            comboBox2.Items.Clear();
+
+            //Find DataBase in Server
+            #region
             cmd = new SqlCommand("select * from sysdatabases", con);
             dr = cmd.ExecuteReader();
             while (dr.Read())
@@ -78,6 +74,13 @@ namespace WindowsFormsApp
                 comboBox2.Items.Add(dr[0]);
             }
             dr.Close();
+            #endregion
+        }
+        //Make Connection to SQL server and find all Database for add to combo
+        public void Createconnection()
+        {                        
+            
+            
         }
         //Make query object for T_SQL query
         public void query(string que)
