@@ -79,7 +79,7 @@ namespace WindowsFormsApp
             cmd = new SqlCommand(que, con);
             cmd.ExecuteNonQuery();
         }
-        // Make blank function for restore Select Database
+        //Make blank function for restore Select Database
         public void blank(string str)
         {
             if (string.IsNullOrEmpty(comboBox1.Text) | string.IsNullOrEmpty(comboBox2.Text))
@@ -107,6 +107,7 @@ namespace WindowsFormsApp
         private void Restore_Click(object sender, EventArgs e)
         {
             label1.Text.Equals(null);
+            //Get .bak file in dirctory 
             string[] filePaths = Directory.GetFiles(@"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup", "WebMarket*.bak", SearchOption.AllDirectories);
             //
             string SourceDate = DateTime.Today.ToShortDateString();            
