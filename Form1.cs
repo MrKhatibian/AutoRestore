@@ -72,6 +72,7 @@ namespace WindowsFormsApp
             }
             dr.Close();
         }
+        //Make query object for T_SQL query
         public void query(string que)
         {
             // ERROR: Not supported in C#: OnErrorStatement
