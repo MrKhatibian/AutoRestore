@@ -51,10 +51,10 @@ namespace WindowsFormsApp
         {            
             con = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
             con.Open();
-            cmd = new SqlCommand("select * from sysservers where srvproduct='SQL Server'", con);
-            dr = cmd.ExecuteReader();            
             MessageBox.Show(con.WorkstationId);
             //Find Server Name from data reader
+            cmd = new SqlCommand("select * from sysservers where srvproduct='SQL Server'", con);
+            dr = cmd.ExecuteReader();
             while (dr.Read())
             {
                 comboBox1.Items.Add(dr[2]);
