@@ -44,6 +44,7 @@ namespace WindowsFormsApp
             label1.Visible = false;
             serverName(".");
         }
+        //Make serverName Function for find ServerName and add to combo
         public void serverName(string str) 
         {
             //con = new SqlConnection("DataSource=" + str + ";InitialCatalog= Master; uid=sa; pwd=Micr0s0ft;");
