@@ -109,7 +109,7 @@ namespace WindowsFormsApp
             label1.Text.Equals(null);
             //Get .bak file in dirctory 
             string[] filePaths = Directory.GetFiles(@"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup", "WebMarket*.bak", SearchOption.AllDirectories);
-            //
+            //Find the last backup fil in directory
             string SourceDate = DateTime.Today.ToShortDateString();            
             string date = DateTime.ParseExact(SourceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy_dd_MM");            
             
