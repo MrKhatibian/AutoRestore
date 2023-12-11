@@ -58,6 +58,7 @@ namespace WindowsFormsApp
             }
             dr.Close();
         }
+        //Make Connection to SQL server and find all Database for add to combo
         public void Createconnection()
         {
             con = new SqlConnection("Data Source=" + (comboBox2.Text) + ";Initial Catalog= Master;Integrated Security=SSPI;");
