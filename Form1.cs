@@ -22,6 +22,7 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
         }      
+        //Copy .bak file from folder to backup sql folder
         private void Copy_Click(object sender, EventArgs e)
         {
             string sourceFile = @"F:\OHM\Projeh\AutoMirorring\SQLBackup\WebMarket.bak";
