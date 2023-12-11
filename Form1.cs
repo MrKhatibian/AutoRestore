@@ -48,18 +48,22 @@ namespace WindowsFormsApp
         
         //Make serverName Function for find ServerName and add to combo
         public void serverName(string str) 
-        {            
+        {
+            //Make Connection to SQL Server
             con = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
             con.Open();
             MessageBox.Show(con.WorkstationId);
             //Find Server Name from data reader
-            cmd = new SqlCommand("select * from sysservers where srvproduct='SQL Server'", con);
-            dr = cmd.ExecuteReader();
-            while (dr.Read())
-            {
-                comboBox1.Items.Add(dr[2]);
-            }
-            dr.Close();
+            #region           
+            //cmd = new SqlCommand("select * from sysservers where srvproduct='SQL Server'", con);
+            //dr = cmd.ExecuteReader();
+            //while (dr.Read())
+            //{
+            //    //dr[2] return server name
+            //    comboBox1.Items.Add(dr[2]);
+            //}
+            //dr.Close();
+            #endregion
         }
         //Make Connection to SQL server and find all Database for add to combo
         public void Createconnection()
