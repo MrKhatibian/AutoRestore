@@ -1,7 +1,7 @@
 ﻿
 namespace WindowsFormsApp
 {
-    partial class Form1
+    partial class AutoRestore
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@ namespace WindowsFormsApp
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoRestore));
             this.Copy = new System.Windows.Forms.Button();
             this.Restore = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -107,7 +108,7 @@ namespace WindowsFormsApp
             this.lblStatusInfo.TabIndex = 6;
             this.lblStatusInfo.Text = "Now Start";
             // 
-            // Form1
+            // AutoRestore
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -119,8 +120,10 @@ namespace WindowsFormsApp
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Restore);
             this.Controls.Add(this.Copy);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "AutoRestore";
+            this.Text = "AutoRestore";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

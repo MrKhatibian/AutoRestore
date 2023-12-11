@@ -13,12 +13,12 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApp
 {
-    public partial class Form1 : Form
+    public partial class AutoRestore : Form
     {
         SqlConnection con;
         SqlCommand cmd;
         SqlDataReader dr;
-        public Form1()
+        public AutoRestore()
         {
             InitializeComponent();
         }   
