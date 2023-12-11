@@ -21,7 +21,14 @@ namespace WindowsFormsApp
         public Form1()
         {
             InitializeComponent();
-        }      
+        }   
+        
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            label1.Visible = false;
+            serverName(".");
+        }
+
         //Copy .bak file from folder to backup sql folder
         private void Copy_Click(object sender, EventArgs e)
         {
@@ -39,11 +46,7 @@ namespace WindowsFormsApp
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            label1.Visible = false;
-            serverName(".");
-        }
+        
         //Make serverName Function for find ServerName and add to combo
         public void serverName(string str) 
         {
@@ -89,13 +92,11 @@ namespace WindowsFormsApp
                 return;
             }
             else
-            {                
-                    //openFileDialog1.ShowDialog();
-                    // string a = ComboBoxDatabaseName.Text.ToString();
-                    query("IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'" + comboBox2.Text + "') DROP DATABASE " + comboBox2.Text + " RESTORE DATABASE " + comboBox2.Text + " FROM DISK = '" + str +"'");
-                //query("IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'" + comboBox2.Text + "') DROP DATABASE " + comboBox2.Text + " RESTORE DATABASE " + comboBox2.Text + " FROM DISK = '" + openFileDialog1.FileName + "'");
+            {
+                query("USE master ALTER DATABASE WebMarket SET SINGLE_USER WITH ROLLBACK IMMEDIATE USE master ALTER DATABASE WebMarket SET MULTI_USER USE master RESTORE DATABASE WebMarket FROM DISK = '" + str +"' WITH REPLACE");
+                //query("IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'" + comboBox2.Text + "') DROP DATABASE " + comboBox2.Text + " RESTORE DATABASE " + comboBox2.Text + " FROM DISK = '" + str +"'");                
                 label1.Visible = true;
-                    label1.Text = "Database Backup file has been restore successfully";                
+                label1.Text = "Database Backup file has been restore successfully"+ str;                
             }
         }
 

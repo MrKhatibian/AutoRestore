@@ -35,6 +35,8 @@ namespace WindowsFormsApp
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.lblStatusInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Copy
@@ -60,7 +62,7 @@ namespace WindowsFormsApp
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(215, 119);
+            this.label1.Location = new System.Drawing.Point(12, 150);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 2;
@@ -69,7 +71,7 @@ namespace WindowsFormsApp
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(12, 12);
+            this.comboBox1.Location = new System.Drawing.Point(12, 52);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(238, 21);
             this.comboBox1.TabIndex = 3;
@@ -82,16 +84,36 @@ namespace WindowsFormsApp
             // comboBox2
             // 
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(12, 39);
+            this.comboBox2.Location = new System.Drawing.Point(12, 79);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 21);
             this.comboBox2.TabIndex = 4;
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(12, 19);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(40, 13);
+            this.lblStatus.TabIndex = 5;
+            this.lblStatus.Text = "Status:";
+            // 
+            // lblStatusInfo
+            // 
+            this.lblStatusInfo.AutoSize = true;
+            this.lblStatusInfo.Location = new System.Drawing.Point(58, 19);
+            this.lblStatusInfo.Name = "lblStatusInfo";
+            this.lblStatusInfo.Size = new System.Drawing.Size(54, 13);
+            this.lblStatusInfo.TabIndex = 6;
+            this.lblStatusInfo.Text = "Now Start";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(330, 181);
+            this.Controls.Add(this.lblStatusInfo);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
@@ -113,6 +135,8 @@ namespace WindowsFormsApp
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label lblStatusInfo;
     }
 }
 
