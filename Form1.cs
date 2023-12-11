@@ -79,6 +79,7 @@ namespace WindowsFormsApp
             cmd = new SqlCommand(que, con);
             cmd.ExecuteNonQuery();
         }
+        // Make blank function for restore Select Database
         public void blank(string str)
         {
             if (string.IsNullOrEmpty(comboBox1.Text) | string.IsNullOrEmpty(comboBox2.Text))
