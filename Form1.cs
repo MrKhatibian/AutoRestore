@@ -14,10 +14,13 @@ using System.Windows.Forms;
 namespace WindowsFormsApp
 {
     public partial class AutoRestore : Form
-    {        
+    {
+        //Make Paramter in My Project
         SqlConnection con;
         SqlCommand cmd;
         SqlDataReader dr;
+        string[] mydataBases;
+        int i;
         public AutoRestore()
         {
             InitializeComponent();
@@ -68,10 +71,12 @@ namespace WindowsFormsApp
             //Find DataBase in Server
             #region
             cmd = new SqlCommand("select * from sysdatabases", con);
-            dr = cmd.ExecuteReader();
+            dr = cmd.ExecuteReader();                 
             while (dr.Read())
             {
+                mydataBases[i] = dr[0].ToString();
                 comboBox2.Items.Add(dr[0]);
+                i++;
             }
             dr.Close();
             #endregion
