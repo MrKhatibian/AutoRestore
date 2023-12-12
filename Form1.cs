@@ -108,10 +108,7 @@ namespace WindowsFormsApp
                 Console.WriteLine(iox);
                 throw;
             }
-        }
-
-                
-
+        }                
         //Find String in SourcePath
         public static string getlastbackupfullName(string strSource, string strStart)
         {
