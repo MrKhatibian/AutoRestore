@@ -55,7 +55,8 @@ namespace WindowsFormsApp
             //Make Connection to SQL Server
             con = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
             con.Open();
-            MessageBox.Show(con.WorkstationId);
+            lblStatusInfo.Text = "Connection to SQL Server ";
+            
             //Find Server Name from data reader
             #region           
             //cmd = new SqlCommand("select * from sysservers where srvproduct='SQL Server'", con);
@@ -79,13 +80,25 @@ namespace WindowsFormsApp
                 i++;
             }
             dr.Close();
+            lblStatusInfo.Text = "Find Databases";
+            #endregion
+
+            //Find the last backup fil in directory
+            #region            
+            //Get .bak file in dirctory 
+            string[] filePaths = Directory.GetFiles(@"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup", "WebMarket*.bak", SearchOption.AllDirectories);            
+            string SourceDate = DateTime.Today.ToShortDateString();
+            string date = DateTime.ParseExact(SourceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy_dd_MM");
+            foreach (string item in filePaths)
+            {               
+                if (item.Contains(date))
+                    blank(item);
+            }
             #endregion
         }
         //Make Connection to SQL server and find all Database for add to combo
         public void Createconnection()
-        {                        
-            
-            
+        {                                                
         }
         //Make query object for T_SQL query
         public void query(string que)
@@ -119,19 +132,7 @@ namespace WindowsFormsApp
 
         private void Restore_Click(object sender, EventArgs e)
         {
-            label1.Text.Equals(null);
-            //Get .bak file in dirctory 
-            string[] filePaths = Directory.GetFiles(@"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup", "WebMarket*.bak", SearchOption.AllDirectories);
-            //Find the last backup fil in directory
-            string SourceDate = DateTime.Today.ToShortDateString();            
-            string date = DateTime.ParseExact(SourceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy_dd_MM");            
-            
-            foreach (string item in filePaths)
-            {
-                int dateIndex = item.IndexOf(date,0);
-                if (item.Contains(date))
-                    blank(item);                
-            }            
+                        
         }
     }
 }
