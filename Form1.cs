@@ -36,7 +36,18 @@ namespace WindowsFormsApp
             foreach (string SourcebakupPath in sourcefilePaths)
             {
                 if (SourcebakupPath.Contains(date))
-                    File.Copy(SourcebakupPath, destinationFile + getlastbackupfullName(SourcebakupPath, databaseName), true);
+                {
+                    try
+                    {
+                        File.Copy(SourcebakupPath, destinationFile + getlastbackupfullName(SourcebakupPath, databaseName), true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        throw;
+                    }
+                }                    
+                    
             }
             //Get .bak file in dirctory and Delete Old Backup file 
             string[] filePaths = Directory.GetFiles(destinationFile, databaseName + "*.bak", SearchOption.AllDirectories);
@@ -92,23 +103,7 @@ namespace WindowsFormsApp
             cmd.CommandTimeout = 600;
             cmd.ExecuteNonQuery();
         }
-
-        //Copy .bak file from Server to backup sql folder
-        public void Copy(object sender, EventArgs e)
-        {
-            string sourceFile = @"F:\OHM\Projeh\AutoMirorring\SQLBackup\WebMarket.bak";
-            string destinationFile = @"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\WebMarket.bak";
-            try
-            {
-                File.Copy(sourceFile, destinationFile, true);
-                MessageBox.Show("Its Done");
-            }
-            catch (IOException iox)
-            {
-                Console.WriteLine(iox);
-                throw;
-            }
-        }                
+                   
         //Find String in SourcePath
         public static string getlastbackupfullName(string strSource, string strStart)
         {
