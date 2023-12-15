@@ -95,8 +95,27 @@ namespace WindowsFormsApp
                 Console.WriteLine(ex);
                 return null;
                 throw;
+            }            
+        }
+
+         //Find the last backup file in path
+        public string lastbakfileFindet(List<string> allbackFile)
+        {
+            if (allbackFile.Count > 0)
+            {
+                List<int> hour = new List<int>();
+                foreach (string bakFile in allbackFile)
+                {
+                    hour.Add(Convert.ToInt32(getBetween(bakFile, todayDate + "_", "_")));
+                }
+                string max = hour.Max().ToString();
+                foreach (string findetlastbakfile in allbackFile)
+                {
+                    if (findetlastbakfile.Contains(max))
+                        return findetlastbakfile;
+                }
             }
-            
+            return null;
         }
 
 
