@@ -168,6 +168,22 @@ namespace WindowsFormsApp
             }
         }
 
+        //Extract backup File Name(without Folder path)
+        public List<string> bakfileName(string[] fullName)
+        {
+            List<String> _bakfileName = new List<string>();
+            int Start;
+            foreach (string bakfile in fullName)
+            {
+                if (bakfile.Contains(databaseName))
+                {
+                    Start = bakfile.IndexOf(databaseName, 0);
+                    _bakfileName.Add(bakfile.Substring(Start));
+                }
+            }            
+            return _bakfileName;
+        }
+
 
         //Make blank function for restore Select Database
         public void blank(string str)
