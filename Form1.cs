@@ -38,6 +38,44 @@ namespace WindowsFormsApp
                     if (sourcebakfile.Contains(todayDate))
                         todaybackupSourceName.Add(sourcebakfile);
                 }
+                //Ready destination folder for Restor Database
+                if (todaybackupSourceName.Count != 0 )
+                {                    
+                    string lastbackupSourceName = lastbakfileFindet(todaybackupSourceName);
+                    while (findbackupfile(destinationfolderPath).Count != 0 )
+                    {
+                        foreach (string oldbakfileIndestination in findetbakfileInDestination)
+                        {
+                            try
+                            {
+                                if (oldbakfileIndestination != lastbackupSourceName)
+                                    File.Delete(destinationfolderPath + oldbakfileIndestination);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                                throw;
+                            }
+                        }
+                        break;
+                    }
+                    if (lastbakfileFindet(findbackupfile(destinationfolderPath)) == null)
+                    {
+                        try
+                        {
+                            File.Copy(sourcefolderPath + lastbackupSourceName, destinationfolderPath + lastbackupSourceName);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            throw;
+                        }
+                    }
+                    string lastbackupDetinationName = lastbakfileFindet(findbackupfile(destinationfolderPath));
+                    RestoreDB(destinationfolderPath + lastbackupDetinationName);
+                }
+                else
+                    lblStatusInfo.Text = "Isn't Update backup file in Source Path";
             }    
             else
                 lblStatusInfo.Text = "Not bakup File in Source Path";
