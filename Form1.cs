@@ -25,6 +25,12 @@ namespace WindowsFormsApp
         
         private void frmAutoRestore_Load(object sender, EventArgs e)
         {
+            //Make List for bakup file in directories
+            List<string> findetbakfileInDestination = findbackupfile(destinationfolderPath);
+            List<string> findetbakfileInSource = findbackupfile(sourcefolderPath);
+            List<string> todaybackupSourceName = new List<string>(); 
+
+
             //Make Connection to SQL Server
             con = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
             con.Open();
