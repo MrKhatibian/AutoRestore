@@ -29,6 +29,17 @@ namespace WindowsFormsApp
             List<string> findetbakfileInDestination = findbackupfile(destinationfolderPath);
             List<string> findetbakfileInSource = findbackupfile(sourcefolderPath);
             List<string> todaybackupSourceName = new List<string>(); 
+             //Chech for Sourece Connection is Ok
+            if (findetbakfileInSource.Count != 0)
+            {
+
+            }    
+            else
+                lblStatusInfo.Text = "Not bakup File in Source Path";
+            //this.Close();
+
+
+
 
 
             //Make Connection to SQL Server
