@@ -151,7 +151,22 @@ namespace WindowsFormsApp
             }            
         }
 
-
+        //Make query object for T_SQL query
+        public void TSQL_query(string que)
+        {
+            try
+            {
+                sqlCommand = new SqlCommand(que, sqlConnection);
+                //Fix TimeOut for 10 min
+                sqlCommand.CommandTimeout = 600;
+                sqlCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
 
 
         //Make blank function for restore Select Database
