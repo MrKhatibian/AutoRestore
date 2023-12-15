@@ -32,7 +32,12 @@ namespace WindowsFormsApp
              //Chech for Sourece Connection is Ok
             if (findetbakfileInSource.Count != 0)
             {
-
+                //Chech for Source file has update backup
+                foreach (string sourcebakfile in findetbakfileInSource)
+                {
+                    if (sourcebakfile.Contains(todayDate))
+                        todaybackupSourceName.Add(sourcebakfile);
+                }
             }    
             else
                 lblStatusInfo.Text = "Not bakup File in Source Path";
