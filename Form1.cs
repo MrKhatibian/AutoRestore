@@ -82,6 +82,28 @@ namespace WindowsFormsApp
             //this.Close();
         }
 
+         //Find all backup file in path by Database Name
+        public List<string> findbackupfile(string path)
+        {
+            try
+            {
+                string[] allbakupfileFindet = Directory.GetFiles(path, databaseName + "*.bak", SearchOption.AllDirectories);
+                return bakfileName(allbakupfileFindet);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+                throw;
+            }
+            
+        }
+
+
+
+
+
+
         //Make blank function for restore Select Database
         public void blank(string str)
         {
