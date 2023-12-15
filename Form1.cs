@@ -8,13 +8,16 @@ namespace WindowsFormsApp
 {
     public partial class AutoRestore : Form
     {
-        //Make Paramter in My Project
-        SqlConnection con;
-        SqlCommand cmd;
+        //Make Paramter
+        #region
+        SqlConnection sqlConnection;
+        SqlCommand sqlCommand;
         string databaseName = "WebMarket";
-        string sourceFile = @"F:\OHM\Projeh\AutoMirorring\SQLBackup";
-        string destinationFile = @"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\";
-
+        string sourcefolderPath = @"F:\OHM\Projeh\AutoMirorring\SQLBackup\";
+        string destinationfolderPath = @"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\";
+        //Convert today date format to yyyy_MM_dd for find the last backup file
+        string todayDate = DateTime.ParseExact(DateTime.Today.ToShortDateString(), "MM/dd/yyyy", CultureInfo.InvariantCulture).ToString("yyyy_MM_dd");
+        #endregion
         public AutoRestore()
         {
             InitializeComponent();
