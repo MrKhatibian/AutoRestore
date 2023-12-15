@@ -131,6 +131,25 @@ namespace WindowsFormsApp
             return "";
         }
 
+        //Make blank function for restore Select Database
+        public void RestoreDB(string str)
+        {
+            
+            sqlConnection = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
+            try
+            {
+                //Make Connection to SQL Server                
+                sqlConnection.Open();
+                lblStatusInfo.Text = "Connection to SQL Server ";                
+                TSQL_query("USE master ALTER DATABASE " + databaseName + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE USE master ALTER DATABASE " + databaseName + " SET MULTI_USER USE master RESTORE DATABASE " + databaseName + " FROM DISK = '" + str + "' WITH REPLACE");
+                lblStatusInfo.Text = "DB " + databaseName + " Restore successfully with" + str;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }            
+        }
 
 
 
