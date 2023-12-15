@@ -183,33 +183,5 @@ namespace WindowsFormsApp
             }            
             return _bakfileName;
         }
-
-
-        //Make blank function for restore Select Database
-        public void blank(string str)
-        {
-            query("USE master ALTER DATABASE "+ databaseName +" SET SINGLE_USER WITH ROLLBACK IMMEDIATE USE master ALTER DATABASE "+ databaseName +" SET MULTI_USER USE master RESTORE DATABASE "+ databaseName +" FROM DISK = '" + str +"' WITH REPLACE");                               
-            lblStatusInfo.Text = "Database Backup file has been restore successfully with"+ str;           
-        }
-
-        //Make query object for T_SQL query
-        public void query(string que)
-        {
-            // ERROR: Not supported in C#: OnErrorStatement
-            cmd = new SqlCommand(que, con);
-            cmd.CommandTimeout = 600;
-            cmd.ExecuteNonQuery();
-        }
-                   
-        //Find String in SourcePath
-        public static string getlastbackupfullName(string strSource, string strStart)
-        {
-            if (strSource.Contains(strStart))
-            {
-                int Start = strSource.IndexOf(strStart, 0);
-                return strSource.Substring(Start);
-            }
-            return "";
-        }
     }
 }
