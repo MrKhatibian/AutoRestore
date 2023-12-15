@@ -7,9 +7,8 @@ using System.Windows.Forms;
 namespace WindowsFormsApp
 {
     public partial class AutoRestore : Form
-    {
-        //Make Paramter
-        #region
+    {       
+        #region Make Paramter
         SqlConnection sqlConnection;
         SqlCommand sqlCommand;
         string databaseName = "WebMarket";

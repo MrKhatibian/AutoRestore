@@ -30,14 +30,9 @@ namespace WindowsFormsApp
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoRestore));
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.lblStatus = new System.Windows.Forms.Label();
             this.lblStatusInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // lblStatus
             // 
@@ -75,7 +70,6 @@ namespace WindowsFormsApp
         }
 
         #endregion
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label lblStatusInfo;
     }
