@@ -1,186 +1,182 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp
 {
+    /// <summary>
+    /// Finds today's latest .bak file in the source folder, copies it to the
+    /// SQL Server backup folder and restores it over the target database.
+    /// </summary>
     public partial class AutoRestore : Form
-    {       
-        #region Make Paramter
-        SqlConnection sqlConnection;
-        SqlCommand sqlCommand;
-        string databaseName = "WebMarket";
-        string sourcefolderPath = @"F:\OHM\Projeh\AutoMirorring\SQLBackup\";
-        string destinationfolderPath = @"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\";
-        //Convert today date format to yyyy_MM_dd for find the last backup file
-        string todayDate = DateTime.ParseExact(DateTime.Today.ToShortDateString(), "MM/dd/yyyy", CultureInfo.InvariantCulture).ToString("yyyy_MM_dd");
+    {
+        #region Settings
+        private const string DatabaseName = "WebMarket";
+        private const string SourceFolderPath = @"F:\OHM\Projeh\AutoMirorring\SQLBackup\";
+        private const string DestinationFolderPath = @"C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\";
+        private const string ConnectionString = "Data Source=.;Initial Catalog=master;Integrated Security=SSPI;";
+        private const int CommandTimeoutSeconds = 600; // 10 minutes
         #endregion
+
         public AutoRestore()
         {
             InitializeComponent();
-        }   
-        
-        private void frmAutoRestore_Load(object sender, EventArgs e)
+        }
+
+        private async void frmAutoRestore_Load(object sender, EventArgs e)
         {
-            //Make List for bakup file in directories
-            List<string> findetbakfileInDestination = findbackupfile(destinationfolderPath);
-            List<string> findetbakfileInSource = findbackupfile(sourcefolderPath);
-            List<string> todaybackupSourceName = new List<string>(); 
-             //Chech for Sourece Connection is Ok
-            if (findetbakfileInSource.Count != 0)
+            try
             {
-                //Chech for Source file has update backup
-                foreach (string sourcebakfile in findetbakfileInSource)
+                // Culture-independent date, e.g. 2025_01_31
+                string todayDate = DateTime.Today.ToString("yyyy_MM_dd", CultureInfo.InvariantCulture);
+
+                if (!Directory.Exists(SourceFolderPath))
                 {
-                    if (sourcebakfile.Contains(todayDate))
-                        todaybackupSourceName.Add(sourcebakfile);
+                    SetStatus("Source path is not accessible.");
+                    return;
                 }
-                //Ready destination folder for Restor Database
-                if (todaybackupSourceName.Count != 0 )
-                {                    
-                    string lastbackupSourceName = lastbakfileFindet(todaybackupSourceName);
-                    while (findbackupfile(destinationfolderPath).Count != 0 )
+                if (!Directory.Exists(DestinationFolderPath))
+                {
+                    SetStatus("Destination path does not exist.");
+                    return;
+                }
+
+                List<string> sourceFiles = FindBackupFiles(SourceFolderPath, SearchOption.AllDirectories);
+                if (sourceFiles.Count == 0)
+                {
+                    SetStatus("No backup file in source path.");
+                    return;
+                }
+
+                string latestBackup = GetLatestBackupOfDay(sourceFiles, todayDate);
+                if (latestBackup == null)
+                {
+                    SetStatus("No up-to-date (today's) backup file in source path.");
+                    return;
+                }
+
+                SetStatus("Preparing destination folder...");
+                string destinationFile = PrepareDestination(latestBackup);
+
+                SetStatus("Restoring " + DatabaseName + " ...");
+                await RestoreDatabaseAsync(destinationFile);
+
+                SetStatus("DB " + DatabaseName + " restored successfully from " + Path.GetFileName(destinationFile));
+            }
+            catch (Exception ex)
+            {
+                SetStatus("Error: " + ex.Message);
+                Console.WriteLine(ex);
+            }
+
+            // Close(); // uncomment if the app should exit automatically (e.g. scheduled task)
+        }
+
+        private void SetStatus(string text)
+        {
+            lblStatusInfo.Text = text;
+            lblStatusInfo.Refresh();
+        }
+
+        /// <summary>Returns full paths of all "{DatabaseName}*.bak" files in a folder.</summary>
+        private static List<string> FindBackupFiles(string folder, SearchOption option)
+        {
+            return Directory.GetFiles(folder, DatabaseName + "*.bak", option).ToList();
+        }
+
+        /// <summary>
+        /// Among the files whose name contains the given date, returns the most
+        /// recently written one (or null if there is none).
+        /// </summary>
+        private static string GetLatestBackupOfDay(IEnumerable<string> files, string dateText)
+        {
+            return files
+                .Where(f => Path.GetFileName(f).Contains(dateText))
+                .OrderByDescending(f => File.GetLastWriteTime(f))
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Removes other backups of this database from the destination folder
+        /// (top directory only) and copies the chosen backup there if needed.
+        /// Returns the full path of the file in the destination.
+        /// </summary>
+        private static string PrepareDestination(string sourceFile)
+        {
+            string fileName = Path.GetFileName(sourceFile);
+            string destinationFile = Path.Combine(DestinationFolderPath, fileName);
+
+            foreach (string oldFile in FindBackupFiles(DestinationFolderPath, SearchOption.TopDirectoryOnly))
+            {
+                if (!string.Equals(Path.GetFileName(oldFile), fileName, StringComparison.OrdinalIgnoreCase))
+                    File.Delete(oldFile);
+            }
+
+            if (!File.Exists(destinationFile))
+                File.Copy(sourceFile, destinationFile);
+
+            return destinationFile;
+        }
+
+        /// <summary>Restores the database from the given .bak file (overwrites existing DB).</summary>
+        private static async Task RestoreDatabaseAsync(string backupFilePath)
+        {
+            string quotedDb = "[" + DatabaseName.Replace("]", "]]") + "]";
+
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                await connection.OpenAsync();
+
+                try
+                {
+                    if (await DatabaseExistsAsync(connection))
                     {
-                        foreach (string oldbakfileIndestination in findetbakfileInDestination)
-                        {
-                            try
-                            {
-                                if (oldbakfileIndestination != lastbackupSourceName)
-                                    File.Delete(destinationfolderPath + oldbakfileIndestination);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex);
-                                throw;
-                            }
-                        }
-                        break;
+                        // Kick out every active connection
+                        await ExecuteAsync(connection,
+                            "ALTER DATABASE " + quotedDb + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE");
                     }
-                    if (lastbakfileFindet(findbackupfile(destinationfolderPath)) == null)
+
+                    // The file path is passed as a parameter (no string concatenation)
+                    await ExecuteAsync(connection,
+                        "RESTORE DATABASE " + quotedDb + " FROM DISK = @path WITH REPLACE",
+                        new SqlParameter("@path", backupFilePath));
+                }
+                finally
+                {
+                    // Always give the database back to users, even if the restore failed
+                    if (await DatabaseExistsAsync(connection))
                     {
-                        try
-                        {
-                            File.Copy(sourcefolderPath + lastbackupSourceName, destinationfolderPath + lastbackupSourceName);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                            throw;
-                        }
+                        await ExecuteAsync(connection,
+                            "ALTER DATABASE " + quotedDb + " SET MULTI_USER");
                     }
-                    string lastbackupDetinationName = lastbakfileFindet(findbackupfile(destinationfolderPath));
-                    RestoreDB(destinationfolderPath + lastbackupDetinationName);
-                }
-                else
-                    lblStatusInfo.Text = "Isn't Update backup file in Source Path";
-            }    
-            else
-                lblStatusInfo.Text = "Not bakup File in Source Path";
-            //this.Close();
-        }
-
-         //Find all backup file in path by Database Name
-        public List<string> findbackupfile(string path)
-        {
-            try
-            {
-                string[] allbakupfileFindet = Directory.GetFiles(path, databaseName + "*.bak", SearchOption.AllDirectories);
-                return bakfileName(allbakupfileFindet);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-                throw;
-            }            
-        }
-
-         //Find the last backup file in path
-        public string lastbakfileFindet(List<string> allbackFile)
-        {
-            if (allbackFile.Count > 0)
-            {
-                List<int> hour = new List<int>();
-                foreach (string bakFile in allbackFile)
-                {
-                    hour.Add(Convert.ToInt32(getBetween(bakFile, todayDate + "_", "_")));
-                }
-                string max = hour.Max().ToString();
-                foreach (string findetlastbakfile in allbackFile)
-                {
-                    if (findetlastbakfile.Contains(max))
-                        return findetlastbakfile;
                 }
             }
-            return null;
         }
 
-        //Find string in between strings
-        public static string getBetween(string strSource, string strStart, string strEnd)
+        private static async Task<bool> DatabaseExistsAsync(SqlConnection connection)
         {
-            if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+            using (var cmd = new SqlCommand("SELECT DB_ID(@name)", connection))
             {
-                int Start, End;
-                Start = strSource.IndexOf(strStart, 0) + strStart.Length;
-                End = strSource.IndexOf(strEnd, Start);
-                return strSource.Substring(Start, End - Start);
-            }
-            return "";
-        }
-
-        //Make blank function for restore Select Database
-        public void RestoreDB(string str)
-        {
-            
-            sqlConnection = new SqlConnection("Data Source=.;Initial Catalog=Master;Integrated Security=SSPI;");
-            try
-            {
-                //Make Connection to SQL Server                
-                sqlConnection.Open();
-                lblStatusInfo.Text = "Connection to SQL Server ";                
-                TSQL_query("USE master ALTER DATABASE " + databaseName + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE USE master ALTER DATABASE " + databaseName + " SET MULTI_USER USE master RESTORE DATABASE " + databaseName + " FROM DISK = '" + str + "' WITH REPLACE");
-                lblStatusInfo.Text = "DB " + databaseName + " Restore successfully with" + str;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }            
-        }
-
-        //Make query object for T_SQL query
-        public void TSQL_query(string que)
-        {
-            try
-            {
-                sqlCommand = new SqlCommand(que, sqlConnection);
-                //Fix TimeOut for 10 min
-                sqlCommand.CommandTimeout = 600;
-                sqlCommand.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
+                cmd.Parameters.AddWithValue("@name", DatabaseName);
+                object result = await cmd.ExecuteScalarAsync();
+                return result != null && result != DBNull.Value;
             }
         }
 
-        //Extract backup File Name(without Folder path)
-        public List<string> bakfileName(string[] fullName)
+        private static async Task ExecuteAsync(SqlConnection connection, string sql, params SqlParameter[] parameters)
         {
-            List<String> _bakfileName = new List<string>();
-            int Start;
-            foreach (string bakfile in fullName)
+            using (var cmd = new SqlCommand(sql, connection))
             {
-                if (bakfile.Contains(databaseName))
-                {
-                    Start = bakfile.IndexOf(databaseName, 0);
-                    _bakfileName.Add(bakfile.Substring(Start));
-                }
-            }            
-            return _bakfileName;
+                cmd.CommandTimeout = CommandTimeoutSeconds;
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+                await cmd.ExecuteNonQueryAsync();
+            }
         }
     }
 }
